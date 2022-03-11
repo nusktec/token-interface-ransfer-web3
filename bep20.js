@@ -84,3 +84,33 @@ const EnthereumInterface = async (_addr, amountUnit) => {
     balance = await contract.methods.balanceOf(myAddress).call();
     console.log(`Balance after send: ${balance}`);
 };
+
+
+ //get bnb-smart chain balance
+    async getBnbBalance(address, callback) {
+        const _getBal = await this.web3.eth.getBalance(address);
+        callback((_getBal / Math.pow(10, 18)).toFixed(4));
+    }
+
+    //get token balance
+    async getBEPTokenBalance(tokenAddress, address, callback) {
+        // ABI to transfer ERC20 Token
+        let abi = ABI_CONFIG;
+        // Get ERC20 Token contract instance
+        let contract = new this.web3.eth.Contract(abi, tokenAddress);
+        //console.log(contract);
+        // Get decimal
+        let decimal = await contract.methods.decimals().call();
+        //console.log(decimal);
+        // Get Balance
+        let balance = await contract.methods.balanceOf(address).call();
+        // Get Name
+        let name = await contract.methods.name().call();
+        // Get Symbol
+        let symbol = await contract.methods.symbol().call();
+
+        let _balance = balance / Math.pow(10, decimal);
+
+        callback({balance: _balance, name, symbol});
+
+    }
